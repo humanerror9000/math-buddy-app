@@ -1,3 +1,4 @@
+// src/App.tsx
 import { useState, useEffect } from 'react';
 import { InitialStartScreen } from './components/InitialStartScreen';
 import { WelcomeScreen } from './components/WelcomeScreen';
@@ -11,7 +12,7 @@ import { StatsDisplay } from './components/StatsDisplay';
 import { ChallengeComplete } from './components/ChallengeComplete';
 import { TablesSetup, type TablesConfig } from './components/TablesSetup';
 import { TablesPractice } from './components/TablesPractice';
-import { supabase } from './lib/supabase';
+import { loadStats, saveStats } from './lib/storage';
 import {
   generateSubtractionProblem,
   generateMultiplicationProblem,
@@ -36,32 +37,40 @@ function App() {
   const [currentProblem, setCurrentProblem] = useState<MathProblem | null>(null);
   const [studentAnswer, setStudentAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState(false);
-  const [sessionId] = useState(() => crypto.randomUUID());
-  const [statsId, setStatsId] = useState<string | null>(null);
+
+  // Stats — loaded from localStorage on mount
   const [totalProblems, setTotalProblems] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
 
   useEffect(() => {
-    initializeSession();
+    const saved = loadStats();
+    setTotalProblems(saved.totalProblems);
+    setCorrectAnswers(saved.correctAnswers);
+    setCurrentStreak(saved.currentStreak);
+    setBestStreak(saved.bestStreak);
   }, []);
 
-  async function initializeSession() {
-    const { data, error } = await supabase
-      .from('session_stats')
-      .insert({
-        session_id: sessionId,
-        total_problems: 0,
-        correct_answers: 0,
-        current_streak: 0,
-        best_streak: 0
-      })
-      .select()
-      .maybeSingle();
+  function updateStats(correct: boolean, prevTotal: number, prevCorrect: number, prevStreak: number, prevBest: number) {
+    const newTotal = prevTotal + 1;
+    const newCorrect = correct ? prevCorrect + 1 : prevCorrect;
+    const newStreak = correct ? prevStreak + 1 : 0;
+    const newBest = Math.max(prevBest, newStreak);
 
-    if (data && !error) {
-      setStatsId(data.id);
-    }
+    setTotalProblems(newTotal);
+    setCorrectAnswers(newCorrect);
+    setCurrentStreak(newStreak);
+    setBestStreak(newBest);
+
+    saveStats({
+      totalProblems: newTotal,
+      correctAnswers: newCorrect,
+      currentStreak: newStreak,
+      bestStreak: newBest,
+    });
+
+    return { newTotal, newCorrect, newStreak, newBest };
   }
 
   function handlePracticeModeSelect(mode: PracticeMode) {
@@ -112,48 +121,20 @@ function App() {
     setStudentAnswer('');
   }
 
-  async function handleSubmit() {
+  function handleSubmit() {
     if (!currentProblem || !studentAnswer) return;
 
     const answerNum = parseInt(studentAnswer);
     const correct = answerNum === currentProblem.correctAnswer;
     setIsCorrect(correct);
 
-    const newTotalProblems = totalProblems + 1;
-    const newCorrectAnswers = correct ? correctAnswers + 1 : correctAnswers;
-    const newStreak = correct ? currentStreak + 1 : 0;
-
-    setTotalProblems(newTotalProblems);
-    setCorrectAnswers(newCorrectAnswers);
-    setCurrentStreak(newStreak);
+    updateStats(correct, totalProblems, correctAnswers, currentStreak, bestStreak);
 
     if (practiceMode === 'challenge') {
       setChallengeTotal(challengeTotal + 1);
       if (correct) {
         setChallengeCorrect(challengeCorrect + 1);
       }
-    }
-
-    await supabase.from('practice_attempts').insert({
-      problem_type: currentProblem.type,
-      difficulty: currentProblem.difficulty,
-      problem_text: currentProblem.displayText,
-      correct_answer: currentProblem.correctAnswer,
-      student_answer: answerNum,
-      is_correct: correct
-    });
-
-    if (statsId) {
-      await supabase
-        .from('session_stats')
-        .update({
-          total_problems: newTotalProblems,
-          correct_answers: newCorrectAnswers,
-          current_streak: newStreak,
-          best_streak: newStreak,
-          last_updated: new Date().toISOString()
-        })
-        .eq('id', statsId);
     }
 
     setScreen('feedback');
@@ -215,26 +196,7 @@ function App() {
   }
 
   function handleTablesStatsUpdate(correct: boolean) {
-    const newTotalProblems = totalProblems + 1;
-    const newCorrectAnswers = correct ? correctAnswers + 1 : correctAnswers;
-    const newStreak = correct ? currentStreak + 1 : 0;
-
-    setTotalProblems(newTotalProblems);
-    setCorrectAnswers(newCorrectAnswers);
-    setCurrentStreak(newStreak);
-
-    if (statsId) {
-      supabase
-        .from('session_stats')
-        .update({
-          total_problems: newTotalProblems,
-          correct_answers: newCorrectAnswers,
-          current_streak: newStreak,
-          best_streak: newStreak,
-          last_updated: new Date().toISOString()
-        })
-        .eq('id', statsId);
-    }
+    updateStats(correct, totalProblems, correctAnswers, currentStreak, bestStreak);
   }
 
   function handleBackToTablesSetup() {
