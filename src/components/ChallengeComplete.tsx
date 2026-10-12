@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Trophy, Play } from 'lucide-react';
+import { playSfx, playVoice } from '../audio/sound';
 
 interface ChallengeCompleteProps {
   totalProblems: number;
@@ -22,11 +23,10 @@ export function ChallengeComplete({
   }, []);
 
   function playAudio() {
-    const audio = new Audio('/audio/challenge-complete-1.mp3');
-
-    audio.play().catch(() => {
-      setAudioError(true);
-    });
+    setAudioError(false);
+    void playSfx('round-complete');
+    // If audio is still locked (no tap yet), offer the replay button
+    playVoice('challenge-complete').catch(() => setAudioError(true));
   }
 
   return (

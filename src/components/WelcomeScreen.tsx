@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Star, Sparkles, Pencil } from 'lucide-react';
-import { speak, unlockAudio } from '../utils/textToSpeech';
+import { playVoice, unlockAudio } from '../audio/sound';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -9,7 +9,7 @@ interface WelcomeScreenProps {
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
-      speak("Hi there! Welcome! Let's start practicing some fun math problems together!");
+      void playVoice('welcome');
     }, 500);
 
     return () => clearTimeout(timer);

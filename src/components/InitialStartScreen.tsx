@@ -1,5 +1,5 @@
 import { BookOpen } from 'lucide-react';
-import { unlockAudio } from '../utils/textToSpeech';
+import { unlockAudio } from '../audio/sound';
 
 interface InitialStartScreenProps {
   onStart: () => void;

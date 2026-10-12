@@ -1,6 +1,6 @@
 import { Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
 import { useEffect } from 'react';
-import { speakSequence } from '../utils/textToSpeech';
+import { playVoice, playSfx } from '../audio/sound';
 import type { MathProblem } from '../utils/problemGenerator';
 import { SubtractionExplanation } from './SubtractionExplanation';
 import { MultiplicationExplanation } from './MultiplicationExplanation';
@@ -41,9 +41,12 @@ function requiresBorrowing(num1: number, num2: number): boolean {
 export function Feedback({ isCorrect, problem, studentAnswer, onNext, onTryAgain }: FeedbackProps) {
   useEffect(() => {
     if (isCorrect) {
-      speakSequence(['correct']);
+      void playSfx('answer-correct');
+      void playVoice('correct');
     } else {
-      speakSequence(['tryagain']);
+      void playSfx('answer-wrong');
+      const needsBorrow = problem.type === 'subtraction' && requiresBorrowing(problem.num1, problem.num2);
+      void playVoice(needsBorrow ? 'borrow' : 'tryagain');
     }
   }, [isCorrect, problem]);
 
