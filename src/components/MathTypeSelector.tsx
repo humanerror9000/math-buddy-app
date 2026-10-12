@@ -1,5 +1,5 @@
 import { Minus, X } from 'lucide-react';
-import { speak } from '../utils/textToSpeech';
+import { playVoice } from '../audio/sound';
 
 interface MathTypeSelectorProps {
   onSelect: (type: 'subtraction' | 'multiplication') => void;
@@ -8,7 +8,7 @@ interface MathTypeSelectorProps {
 export function MathTypeSelector({ onSelect }: MathTypeSelectorProps) {
   const handleSelect = (type: 'subtraction' | 'multiplication') => {
     if (type === 'multiplication') {
-      speak('Welcome to multiplication! Let\'s practice our times tables!');
+      void playVoice('mulwelcome');
     }
     onSelect(type);
   };

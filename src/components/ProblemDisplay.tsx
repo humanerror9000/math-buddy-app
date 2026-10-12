@@ -1,6 +1,6 @@
 import { Volume2, VolumeX, Delete } from 'lucide-react';
 import { useState } from 'react';
-import { setSoundEnabled, getSoundEnabled } from '../utils/textToSpeech';
+import { setSoundEnabled, getSoundEnabled } from '../audio/sound';
 import type { MathProblem } from '../utils/problemGenerator';
 
 interface ProblemDisplayProps {

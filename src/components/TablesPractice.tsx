@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Volume2, VolumeX, Delete, CheckCircle, XCircle } from 'lucide-react';
-import { setSoundEnabled, getSoundEnabled } from '../utils/textToSpeech';
+import { setSoundEnabled, getSoundEnabled, playVoice, playSfx } from '../audio/sound';
 import type { TablesConfig } from './TablesSetup';
 
 interface TablesPracticeProps {
@@ -93,17 +93,14 @@ export function TablesPractice({ config, onBack, onStatsUpdate }: TablesPractice
     setFeedback(null);
   }
 
+  // Goes through the sound engine, so the mute button now applies here too
   function playRandomAudio(type: 'correct' | 'incorrect') {
     if (type === 'correct') {
-      const correctFiles = [1, 2, 3, 4, 5, 6];
-      const randomFile = correctFiles[Math.floor(Math.random() * correctFiles.length)];
-      const audio = new Audio(`/audio/correct-${randomFile}.mp3`);
-      audio.play().catch(() => {});
+      void playSfx('answer-correct');
+      void playVoice('correct');
     } else {
-      const tryAgainFiles = [1, 2, 3, 4, 5, 6];
-      const randomFile = tryAgainFiles[Math.floor(Math.random() * tryAgainFiles.length)];
-      const audio = new Audio(`/audio/tryagain-${randomFile}.mp3`);
-      audio.play().catch(() => {});
+      void playSfx('answer-wrong');
+      void playVoice('tryagain');
     }
   }
 
