@@ -36,6 +36,9 @@ export interface GameState {
   borrow: { level: number; rounds: number };
   /** Times tables: steps finished per table (0–3; 3 means learned) */
   tables: Record<string, number>;
+  /** Arrays and Sharing: steps finished (0–3) */
+  arrays: number;
+  sharing: number;
 }
 
 const KEY = 'mathbuddy_game';
@@ -58,6 +61,8 @@ function fresh(): GameState {
     nextId: 3,
     borrow: { level: 0, rounds: 0 },
     tables: {},
+    arrays: 0,
+    sharing: 0,
   };
 }
 

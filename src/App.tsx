@@ -1,11 +1,12 @@
 // src/App.tsx
-// Three screens: Buddy's room (home), and the two practice modules opened from its Practice picker.
+// Buddy's room (home), and the practice modules opened from its Practice picker.
 
 import { useCallback, useState } from 'react';
 import { RoomHome } from './room/RoomHome';
 import type { PracticeModule } from './room/PracticeSheet';
 import { BorrowPractice } from './practice/BorrowPractice';
 import { TimesPractice } from './practice/TimesPractice';
+import { ShareArraysPractice } from './practice/ShareArraysPractice';
 import { loadStats, saveStats } from './lib/storage';
 
 type Screen = 'room' | PracticeModule;
@@ -31,6 +32,7 @@ function App() {
       {screen === 'room' && <RoomHome onPractice={setScreen} />}
       {screen === 'borrow' && <BorrowPractice onExit={toRoom} onSolved={recordAnswer} />}
       {screen === 'times' && <TimesPractice onExit={toRoom} onSolved={recordAnswer} />}
+      {(screen === 'arrays' || screen === 'sharing') && <ShareArraysPractice key={screen} module={screen} onExit={toRoom} onSolved={recordAnswer} />}
     </>
   );
 }
