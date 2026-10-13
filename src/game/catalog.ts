@@ -60,15 +60,15 @@ export const P = {
 const BRIGHTS = [P.tomato, P.teal, P.sun, P.cobalt, P.grape];
 
 export const CATALOG: CatalogItem[] = [
-  { type: 'rug', stars: 3, w: 2, d: 2, floor: true, colors: [P.teal, P.tomato, P.sun, P.cobalt, P.grape] },
-  { type: 'plant', stars: 3, w: 1, d: 1, colors: [P.tomato, P.cobalt, P.sun, P.teal, P.white] },
-  { type: 'beanbag', stars: 4, w: 1, d: 1, colors: [P.sun, ...BRIGHTS.filter((c) => c !== P.sun)] },
-  { type: 'lamp', stars: 5, w: 1, d: 1, colors: [P.cobalt, P.sun, P.tomato, P.teal, P.white] },
-  { type: 'table', stars: 6, w: 1, d: 1, colors: [P.white, P.teal, P.tomato, P.sun, P.cobalt] },
-  { type: 'shelf', stars: 8, w: 1, d: 1, colors: [P.white, P.sun, P.teal, P.tomato, P.cobalt] },
-  { type: 'fishbowl', stars: 10, w: 1, d: 1, colors: [P.teal, P.tomato, P.sun, P.white, P.grape] },
-  { type: 'bed', stars: 12, w: 1, d: 2, colors: [P.cobalt, P.teal, P.tomato, P.sun, P.grape] },
-  { type: 'kitty', stars: 20, w: 1, d: 1, colors: ['#E58C3A', '#5B4A73', P.white, '#9E9E9E', '#E9C8A0'], rare: true },
+  { type: 'rug', stars: 10, w: 2, d: 2, floor: true, colors: [P.teal, P.tomato, P.sun, P.cobalt, P.grape] },
+  { type: 'plant', stars: 10, w: 1, d: 1, colors: [P.tomato, P.cobalt, P.sun, P.teal, P.white] },
+  { type: 'beanbag', stars: 25, w: 1, d: 1, colors: [P.sun, ...BRIGHTS.filter((c) => c !== P.sun)] },
+  { type: 'lamp', stars: 30, w: 1, d: 1, colors: [P.cobalt, P.sun, P.tomato, P.teal, P.white] },
+  { type: 'table', stars: 40, w: 1, d: 1, colors: [P.white, P.teal, P.tomato, P.sun, P.cobalt] },
+  { type: 'shelf', stars: 60, w: 1, d: 1, colors: [P.white, P.sun, P.teal, P.tomato, P.cobalt] },
+  { type: 'fishbowl', stars: 80, w: 1, d: 1, colors: [P.teal, P.tomato, P.sun, P.white, P.grape] },
+  { type: 'bed', stars: 100, w: 1, d: 2, colors: [P.cobalt, P.teal, P.tomato, P.sun, P.grape] },
+  { type: 'kitty', stars: 150, w: 1, d: 1, colors: ['#E58C3A', '#5B4A73', P.white, '#9E9E9E', '#E9C8A0'], rare: true },
 ];
 
 export const itemDef = (type: ItemType): CatalogItem => CATALOG.find((c) => c.type === type)!;
