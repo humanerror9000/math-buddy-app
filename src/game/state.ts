@@ -32,6 +32,8 @@ export interface GameState {
   newSince: Partial<Record<ItemType, number>>;
   room: PlacedItem[];
   nextId: number;
+  /** Borrowing practice: level 0 blocks, 1 discs, 2 pencil; rounds finished at the current level */
+  borrow: { level: number; rounds: number };
 }
 
 const KEY = 'mathbuddy_game';
@@ -52,6 +54,7 @@ function fresh(): GameState {
       { id: 2, type: 'plant', x: 0, z: 0, rot: 0, color: 0 },
     ],
     nextId: 3,
+    borrow: { level: 0, rounds: 0 },
   };
 }
 

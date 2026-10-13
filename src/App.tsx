@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { RoomHome } from './room/RoomHome';
 import { addStars } from './game/store';
 import { BackToRoom } from './room/BackToRoom';
+import { BorrowPractice } from './practice/BorrowPractice';
 import { PracticeModeSelector } from './components/PracticeModeSelector';
 import { ChallengeSetup, type ChallengeConfig } from './components/ChallengeSetup';
 import { MathTypeSelector } from './components/MathTypeSelector';
@@ -22,7 +23,7 @@ import {
   type MathProblem
 } from './utils/problemGenerator';
 
-type Screen = 'room' | 'practice-mode' | 'challenge-setup' | 'math-type' | 'difficulty' | 'problem' | 'feedback' | 'challenge-complete' | 'tables-setup' | 'tables-practice';
+type Screen = 'room' | 'borrow' | 'practice-mode' | 'challenge-setup' | 'math-type' | 'difficulty' | 'problem' | 'feedback' | 'challenge-complete' | 'tables-setup' | 'tables-practice';
 type PracticeMode = 'free' | 'challenge';
 
 function App() {
@@ -93,6 +94,12 @@ function App() {
 
   function handleMathTypeSelect(type: 'subtraction' | 'multiplication') {
     setMathType(type);
+
+    // Free-practice subtraction is the new borrowing practice (blocks → discs → pencil)
+    if (type === 'subtraction' && practiceMode !== 'challenge') {
+      setScreen('borrow');
+      return;
+    }
 
     if (practiceMode === 'challenge' && challengeConfig) {
       const firstDifficulty = challengeConfig.difficultySequence[0] as SubtractionDifficulty | MultiplicationDifficulty;
@@ -215,15 +222,22 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-blue-100">
-      {screen !== 'room' && (
+      {screen !== 'room' && screen !== 'borrow' && (
         <BackToRoom onClick={() => setScreen('room')} />
+      )}
+
+      {screen === 'borrow' && (
+        <BorrowPractice
+          onExit={() => setScreen('room')}
+          onSolved={(firstTry) => updateStats(firstTry, totalProblems, correctAnswers, currentStreak, bestStreak)}
+        />
       )}
 
       {screen === 'room' && (
         <RoomHome onPractice={() => setScreen('practice-mode')} />
       )}
 
-      {screen !== 'room' && screen !== 'practice-mode' && screen !== 'challenge-setup' && screen !== 'challenge-complete' && screen !== 'tables-setup' && (
+      {screen !== 'room' && screen !== 'borrow' && screen !== 'practice-mode' && screen !== 'challenge-setup' && screen !== 'challenge-complete' && screen !== 'tables-setup' && (
         <StatsDisplay
           totalProblems={totalProblems}
           correctAnswers={correctAnswers}
