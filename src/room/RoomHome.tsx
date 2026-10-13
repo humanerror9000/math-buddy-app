@@ -13,6 +13,7 @@ import { updateGame, useGame } from '../game/store';
 import { getSoundEnabled, onSoundEnabledChange, playSfx, playVoice, setSoundEnabled } from '../audio/sound';
 import { RoomScene, itemThumbnail } from './RoomScene';
 import { CheckIcon, CloseIcon, LockIcon, SoundIcon, StarIcon } from './icons';
+import { PracticeSheet, type PracticeModule } from './PracticeSheet';
 
 interface Placing {
   type: ItemType;
@@ -32,7 +33,7 @@ const PLACE_SOUND: Record<ItemType, string> = {
   lamp: 'place-glass', fishbowl: 'place-glass', table: 'place-wood', shelf: 'place-wood', kitty: 'place-pet',
 };
 
-export function RoomHome({ onPractice }: { onPractice: () => void }) {
+export function RoomHome({ onPractice }: { onPractice: (m: PracticeModule) => void }) {
   const game = useGame();
   const t = STRINGS[game.lang];
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -42,6 +43,7 @@ export function RoomHome({ onPractice }: { onPractice: () => void }) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [placing, setPlacing] = useState<Placing | null>(null);
   const [treasuresOpen, setTreasuresOpen] = useState(false);
+  const [practiceOpen, setPracticeOpen] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [bubble, setBubble] = useState<{ text: string; id: number } | null>(null);
   const [soundOn, setSoundOn] = useState(getSoundEnabled());
@@ -225,6 +227,16 @@ export function RoomHome({ onPractice }: { onPractice: () => void }) {
     void playSfx('sheet-close');
   };
 
+  const openPractice = () => {
+    setSelectedId(null);
+    setPracticeOpen(true);
+    void playSfx('sheet-open');
+  };
+  const closePractice = () => {
+    setPracticeOpen(false);
+    void playSfx('sheet-close');
+  };
+
   const toggleSound = () => setSoundEnabled(!soundOn);
   const toggleLang = () => updateGame((s) => ({ ...s, lang: s.lang === 'en' ? 'es' : 'en' }));
 
@@ -253,7 +265,7 @@ export function RoomHome({ onPractice }: { onPractice: () => void }) {
       {bubble && <div ref={bubbleRef} className="mb-bubble" key={bubble.id} role="status">{bubble.text}</div>}
 
       {/* bottom area: main buttons, item tools, or placing tools */}
-      {!showOnboarding && !treasuresOpen && (
+      {!showOnboarding && !treasuresOpen && !practiceOpen && (
         <div className="mb-bar">
           {placing ? (
             <div className="mb-tools">
@@ -274,7 +286,7 @@ export function RoomHome({ onPractice }: { onPractice: () => void }) {
             </div>
           ) : (
             <>
-              <button className="mb-btn" onClick={onPractice}>{t.practice}</button>
+              <button className="mb-btn" onClick={openPractice}>{t.practice}</button>
               <button className="mb-btn secondary" onClick={openTreasures}>{t.treasures}</button>
             </>
           )}
@@ -285,6 +297,13 @@ export function RoomHome({ onPractice }: { onPractice: () => void }) {
         <>
           <div className="mb-scrim" onClick={closeTreasures} />
           <Treasures onClose={closeTreasures} onUnlock={unlock} onPlace={(type) => startPlacing(type)} />
+        </>
+      )}
+
+      {practiceOpen && (
+        <>
+          <div className="mb-scrim" onClick={closePractice} />
+          <PracticeSheet onClose={closePractice} onPick={(m) => { setPracticeOpen(false); onPractice(m); }} />
         </>
       )}
 

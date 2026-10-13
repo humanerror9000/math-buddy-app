@@ -42,6 +42,12 @@ interface Strings {
   done: string;
   cancel: string;
   items: Record<ItemType, string>;
+  // practice picker
+  practiceTitle: string;
+  play: string;
+  soon: string;
+  modules: Record<'borrow' | 'times' | 'arrays' | 'division' | 'words', string>;
+  borrowSteps: [string, string, string];
 }
 
 const en: Strings = {
@@ -88,6 +94,11 @@ const en: Strings = {
     bed: 'Bed',
     kitty: 'Kitty',
   },
+  practiceTitle: 'Practice',
+  play: 'Play',
+  soon: 'Soon',
+  modules: { borrow: 'Borrowing', times: 'Times tables', arrays: 'Arrays', division: 'Sharing', words: 'Story math' },
+  borrowSteps: ['Blocks', 'Discs', 'Pencil'],
 };
 
 const es: Strings = {
@@ -134,6 +145,11 @@ const es: Strings = {
     bed: 'Cama',
     kitty: 'Gatito',
   },
+  practiceTitle: 'Practicar',
+  play: 'Jugar',
+  soon: 'Pronto',
+  modules: { borrow: 'Prestando', times: 'Tablas', arrays: 'Arreglos', division: 'Repartir', words: 'Cuentos' },
+  borrowSteps: ['Bloques', 'Fichas', 'Lápiz'],
 };
 
 export const STRINGS: Record<Lang, Strings> = { en, es };

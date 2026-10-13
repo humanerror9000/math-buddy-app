@@ -2,16 +2,13 @@
 import { useState, useEffect } from 'react';
 import { RoomHome } from './room/RoomHome';
 import { addStars } from './game/store';
+import type { PracticeModule } from './room/PracticeSheet';
 import { BackToRoom } from './room/BackToRoom';
 import { BorrowPractice } from './practice/BorrowPractice';
-import { PracticeModeSelector } from './components/PracticeModeSelector';
-import { ChallengeSetup, type ChallengeConfig } from './components/ChallengeSetup';
-import { MathTypeSelector } from './components/MathTypeSelector';
 import { DifficultySelector } from './components/DifficultySelector';
 import { ProblemDisplay } from './components/ProblemDisplay';
 import { Feedback } from './components/Feedback';
 import { StatsDisplay } from './components/StatsDisplay';
-import { ChallengeComplete } from './components/ChallengeComplete';
 import { TablesSetup, type TablesConfig } from './components/TablesSetup';
 import { TablesPractice } from './components/TablesPractice';
 import { loadStats, saveStats } from './lib/storage';
@@ -23,16 +20,10 @@ import {
   type MathProblem
 } from './utils/problemGenerator';
 
-type Screen = 'room' | 'borrow' | 'practice-mode' | 'challenge-setup' | 'math-type' | 'difficulty' | 'problem' | 'feedback' | 'challenge-complete' | 'tables-setup' | 'tables-practice';
-type PracticeMode = 'free' | 'challenge';
+type Screen = 'room' | 'borrow' | 'difficulty' | 'problem' | 'feedback' | 'tables-setup' | 'tables-practice';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('room');
-  const [practiceMode, setPracticeMode] = useState<PracticeMode | null>(null);
-  const [challengeConfig, setChallengeConfig] = useState<ChallengeConfig | null>(null);
-  const [challengeProblemIndex, setChallengeProblemIndex] = useState(0);
-  const [challengeTotal, setChallengeTotal] = useState(0);
-  const [challengeCorrect, setChallengeCorrect] = useState(0);
   const [tablesConfig, setTablesConfig] = useState<TablesConfig | null>(null);
   const [mathType, setMathType] = useState<'subtraction' | 'multiplication' | null>(null);
   const [difficulty, setDifficulty] = useState<SubtractionDifficulty | MultiplicationDifficulty | null>(null);
@@ -75,37 +66,13 @@ function App() {
     return { newTotal, newCorrect, newStreak, newBest };
   }
 
-  function handlePracticeModeSelect(mode: PracticeMode) {
-    setPracticeMode(mode);
-    if (mode === 'challenge') {
-      setScreen('challenge-setup');
-    } else {
-      setScreen('math-type');
-    }
-  }
-
-  function handleChallengeSelect(config: ChallengeConfig) {
-    setChallengeConfig(config);
-    setChallengeProblemIndex(0);
-    setChallengeTotal(0);
-    setChallengeCorrect(0);
-    setScreen('math-type');
-  }
-
-  function handleMathTypeSelect(type: 'subtraction' | 'multiplication') {
-    setMathType(type);
-
-    // Free-practice subtraction is the new borrowing practice (blocks → discs → pencil)
-    if (type === 'subtraction' && practiceMode !== 'challenge') {
+  // The room's Practice picker
+  function handlePractice(m: PracticeModule) {
+    if (m === 'borrow') {
       setScreen('borrow');
-      return;
-    }
-
-    if (practiceMode === 'challenge' && challengeConfig) {
-      const firstDifficulty = challengeConfig.difficultySequence[0] as SubtractionDifficulty | MultiplicationDifficulty;
-      generateNewProblem(type, firstDifficulty);
-      setScreen('problem');
     } else {
+      // Times tables: the existing multiplication screens, until they're rebuilt with arrays
+      setMathType('multiplication');
       setScreen('difficulty');
     }
   }
@@ -141,32 +108,11 @@ function App() {
     // Stars: one for every correct answer
     if (correct) addStars(1);
 
-    if (practiceMode === 'challenge') {
-      setChallengeTotal(challengeTotal + 1);
-      if (correct) {
-        setChallengeCorrect(challengeCorrect + 1);
-      }
-    }
-
     setScreen('feedback');
   }
 
   function handleNext() {
-    if (practiceMode === 'challenge' && challengeConfig && mathType) {
-      const nextIndex = challengeProblemIndex + 1;
-
-      if (nextIndex >= challengeConfig.totalProblems) {
-        addStars(3); // bonus for finishing a challenge
-        setScreen('challenge-complete');
-        setChallengeProblemIndex(0);
-        return;
-      }
-
-      const nextDifficulty = challengeConfig.difficultySequence[nextIndex] as SubtractionDifficulty | MultiplicationDifficulty;
-      setChallengeProblemIndex(nextIndex);
-      generateNewProblem(mathType, nextDifficulty);
-      setScreen('problem');
-    } else if (mathType && difficulty) {
+    if (mathType && difficulty) {
       generateNewProblem(mathType, difficulty);
       setScreen('problem');
     }
@@ -178,24 +124,11 @@ function App() {
   }
 
   function handleBackToDifficulty() {
-    if (practiceMode === 'challenge') {
-      setScreen('math-type');
-    } else {
-      setScreen('difficulty');
-    }
+    setScreen('difficulty');
   }
 
-  function handleBackToMathType() {
-    setScreen('math-type');
-  }
-
-  function handleNewChallenge() {
-    setScreen('challenge-setup');
-  }
-
-  function handleFreePractice() {
-    setPracticeMode('free');
-    setScreen('math-type');
+  function handleBackToRoom() {
+    setScreen('room');
   }
 
   function handleTimesTablesSelect() {
@@ -234,10 +167,10 @@ function App() {
       )}
 
       {screen === 'room' && (
-        <RoomHome onPractice={() => setScreen('practice-mode')} />
+        <RoomHome onPractice={handlePractice} />
       )}
 
-      {screen !== 'room' && screen !== 'borrow' && screen !== 'practice-mode' && screen !== 'challenge-setup' && screen !== 'challenge-complete' && screen !== 'tables-setup' && (
+      {screen !== 'room' && screen !== 'borrow' && screen !== 'tables-setup' && (
         <StatsDisplay
           totalProblems={totalProblems}
           correctAnswers={correctAnswers}
@@ -245,24 +178,12 @@ function App() {
         />
       )}
 
-      {screen === 'practice-mode' && (
-        <PracticeModeSelector onSelect={handlePracticeModeSelect} />
-      )}
-
-      {screen === 'challenge-setup' && (
-        <ChallengeSetup onSelect={handleChallengeSelect} />
-      )}
-
-      {screen === 'math-type' && (
-        <MathTypeSelector onSelect={handleMathTypeSelect} />
-      )}
-
-      {screen === 'difficulty' && mathType && practiceMode === 'free' && (
+      {screen === 'difficulty' && mathType && (
         <DifficultySelector
           mathType={mathType}
           onSelect={handleDifficultySelect}
           onTimesTablesSelect={mathType === 'multiplication' ? handleTimesTablesSelect : undefined}
-          onBack={handleBackToMathType}
+          onBack={handleBackToRoom}
         />
       )}
 
@@ -283,15 +204,6 @@ function App() {
           studentAnswer={parseInt(studentAnswer)}
           onNext={handleNext}
           onTryAgain={handleTryAgain}
-        />
-      )}
-
-      {screen === 'challenge-complete' && (
-        <ChallengeComplete
-          totalProblems={challengeTotal}
-          correctAnswers={challengeCorrect}
-          onNewChallenge={handleNewChallenge}
-          onFreePractice={handleFreePractice}
         />
       )}
 
