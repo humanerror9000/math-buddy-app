@@ -52,13 +52,13 @@ Buddy's non-verbal voice goes in `../voice/` with the same naming.
 | `column-done` | 1 | One column of a subtraction finished | Small "click into place" |
 | `split-array` | 1 | An array splits in two (7×8 = 5×8 + 2×8) | Gentle crack/slide |
 
-## 3. Room and shop
+## 3. Room and Treasures
 
 | Event | How many | When it plays | Notes |
 |---|---|---|---|
-| `sheet-open` | 1 | Practice or shop panel slides up | |
+| `sheet-open` | 1 | Practice or Treasures panel slides up | |
 | `sheet-close` | 1 | Panel slides down | |
-| `shop-buy` | 2 | Choosing an item to place | Gift/unwrap feel, not a cash register |
+| `treasure-unlock` | 2 | Unlocking a treasure with stars | Gift/unwrap feel, never a cash register |
 | `cant-afford` | 1 | Not enough stars | Soft, encouraging |
 | `place-wood` | 3 | Placing shelf, table, bed | Thunk |
 | `place-soft` | 3 | Beanbag, plush, pillow | Squish/flump |

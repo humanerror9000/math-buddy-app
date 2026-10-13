@@ -1,7 +1,8 @@
 // src/App.tsx
 import { useState, useEffect } from 'react';
-import { InitialStartScreen } from './components/InitialStartScreen';
-import { WelcomeScreen } from './components/WelcomeScreen';
+import { RoomHome } from './room/RoomHome';
+import { addStars } from './game/store';
+import { BackToRoom } from './room/BackToRoom';
 import { PracticeModeSelector } from './components/PracticeModeSelector';
 import { ChallengeSetup, type ChallengeConfig } from './components/ChallengeSetup';
 import { MathTypeSelector } from './components/MathTypeSelector';
@@ -21,11 +22,11 @@ import {
   type MathProblem
 } from './utils/problemGenerator';
 
-type Screen = 'initial-start' | 'welcome' | 'practice-mode' | 'challenge-setup' | 'math-type' | 'difficulty' | 'problem' | 'feedback' | 'challenge-complete' | 'tables-setup' | 'tables-practice';
+type Screen = 'room' | 'practice-mode' | 'challenge-setup' | 'math-type' | 'difficulty' | 'problem' | 'feedback' | 'challenge-complete' | 'tables-setup' | 'tables-practice';
 type PracticeMode = 'free' | 'challenge';
 
 function App() {
-  const [screen, setScreen] = useState<Screen>('initial-start');
+  const [screen, setScreen] = useState<Screen>('room');
   const [practiceMode, setPracticeMode] = useState<PracticeMode | null>(null);
   const [challengeConfig, setChallengeConfig] = useState<ChallengeConfig | null>(null);
   const [challengeProblemIndex, setChallengeProblemIndex] = useState(0);
@@ -130,6 +131,9 @@ function App() {
 
     updateStats(correct, totalProblems, correctAnswers, currentStreak, bestStreak);
 
+    // Stars: one for every correct answer
+    if (correct) addStars(1);
+
     if (practiceMode === 'challenge') {
       setChallengeTotal(challengeTotal + 1);
       if (correct) {
@@ -145,6 +149,7 @@ function App() {
       const nextIndex = challengeProblemIndex + 1;
 
       if (nextIndex >= challengeConfig.totalProblems) {
+        addStars(3); // bonus for finishing a challenge
         setScreen('challenge-complete');
         setChallengeProblemIndex(0);
         return;
@@ -196,6 +201,7 @@ function App() {
   }
 
   function handleTablesStatsUpdate(correct: boolean) {
+    if (correct) addStars(1);
     updateStats(correct, totalProblems, correctAnswers, currentStreak, bestStreak);
   }
 
@@ -209,20 +215,20 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-blue-100">
-      {screen !== 'initial-start' && screen !== 'welcome' && screen !== 'practice-mode' && screen !== 'challenge-setup' && screen !== 'challenge-complete' && screen !== 'tables-setup' && (
+      {screen !== 'room' && (
+        <BackToRoom onClick={() => setScreen('room')} />
+      )}
+
+      {screen === 'room' && (
+        <RoomHome onPractice={() => setScreen('practice-mode')} />
+      )}
+
+      {screen !== 'room' && screen !== 'practice-mode' && screen !== 'challenge-setup' && screen !== 'challenge-complete' && screen !== 'tables-setup' && (
         <StatsDisplay
           totalProblems={totalProblems}
           correctAnswers={correctAnswers}
           currentStreak={currentStreak}
         />
-      )}
-
-      {screen === 'initial-start' && (
-        <InitialStartScreen onStart={() => setScreen('welcome')} />
-      )}
-
-      {screen === 'welcome' && (
-        <WelcomeScreen onStart={() => setScreen('practice-mode')} />
       )}
 
       {screen === 'practice-mode' && (
