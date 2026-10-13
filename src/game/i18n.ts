@@ -48,6 +48,7 @@ interface Strings {
   soon: string;
   modules: Record<'borrow' | 'times' | 'arrays' | 'division' | 'words', string>;
   borrowSteps: [string, string, string];
+  moduleSteps: Record<'borrow' | 'arrays' | 'division', [string, string, string]>;
 }
 
 const en: Strings = {
@@ -99,6 +100,7 @@ const en: Strings = {
   soon: 'Soon',
   modules: { borrow: 'Borrowing', times: 'Times tables', arrays: 'Arrays', division: 'Sharing', words: 'Story math' },
   borrowSteps: ['Blocks', 'Discs', 'Pencil'],
+  moduleSteps: { borrow: ['Blocks', 'Discs', 'Pencil'], arrays: ['Build', 'Tens', 'Boxes'], division: ['Plates', 'Rows', 'Memory'] },
 };
 
 const es: Strings = {
@@ -150,6 +152,7 @@ const es: Strings = {
   soon: 'Pronto',
   modules: { borrow: 'Prestando', times: 'Tablas', arrays: 'Arreglos', division: 'Repartir', words: 'Cuentos' },
   borrowSteps: ['Bloques', 'Fichas', 'Lápiz'],
+  moduleSteps: { borrow: ['Bloques', 'Fichas', 'Lápiz'], arrays: ['Construir', 'Decenas', 'Cajas'], division: ['Platos', 'Filas', 'Memoria'] },
 };
 
 export const STRINGS: Record<Lang, Strings> = { en, es };

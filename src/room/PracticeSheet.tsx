@@ -8,10 +8,12 @@ import { useGame } from '../game/store';
 import { playSfx } from '../audio/sound';
 import { CloseIcon, LockIcon } from './icons';
 
-export type PracticeModule = 'borrow' | 'times';
-type CardKey = PracticeModule | 'arrays' | 'division' | 'words';
+export type PracticeModule = 'borrow' | 'times' | 'arrays' | 'sharing';
+type CardKey = 'borrow' | 'times' | 'arrays' | 'division' | 'words';
 
-const SOON: CardKey[] = ['arrays', 'division', 'words'];
+const SOON: CardKey[] = ['words'];
+/** The Sharing card is keyed 'division' for its art and name */
+const MODULE_OF: Partial<Record<CardKey, PracticeModule>> = { borrow: 'borrow', times: 'times', arrays: 'arrays', division: 'sharing' };
 
 function PlayIcon() {
   return (
@@ -57,6 +59,9 @@ export function PracticeSheet({ onClose, onPick }: { onClose: () => void; onPick
   const [shaking, setShaking] = useState<{ k: CardKey; n: number } | null>(null);
   const level = Math.min(2, Math.max(0, game.borrow?.level ?? 0));
   const isNewBorrow = (game.borrow?.level ?? 0) === 0 && (game.borrow?.rounds ?? 0) === 0;
+  // steps finished (0–3) for the modules that show step chips
+  const stepsDone: Partial<Record<CardKey, number>> = { borrow: level, arrays: game.arrays ?? 0, division: game.sharing ?? 0 };
+  const isNew: Partial<Record<CardKey, boolean>> = { borrow: isNewBorrow, arrays: !game.arrays, division: !game.sharing };
 
   const tap = (k: CardKey) => {
     if (SOON.includes(k)) {
@@ -65,7 +70,7 @@ export function PracticeSheet({ onClose, onPick }: { onClose: () => void; onPick
       return;
     }
     void playSfx('sheet-close');
-    onPick(k as PracticeModule);
+    onPick(MODULE_OF[k]!);
   };
 
   const cards: CardKey[] = ['borrow', 'times', 'arrays', 'division', 'words'];
@@ -85,16 +90,16 @@ export function PracticeSheet({ onClose, onPick }: { onClose: () => void; onPick
               className={`pk-card${soon ? ' soon' : ''}${shaking?.k === k ? ' shake' : ''}`}
               onClick={() => tap(k)}
             >
-              {k === 'borrow' && isNewBorrow && <span className="mb-tag">{t.newTag}</span>}
+              {isNew[k] && <span className="mb-tag">{t.newTag}</span>}
               <div className="pk-art">
                 <Art k={k} />
                 {soon && <span className="mb-lock"><LockIcon /></span>}
               </div>
               <b>{name}</b>
-              {k === 'borrow' && (
+              {stepsDone[k] !== undefined && (
                 <div className="pk-steps">
-                  {t.borrowSteps.map((s, i) => (
-                    <span key={s} className={i < level ? 'done' : i === level ? 'on' : ''}>{s}</span>
+                  {t.moduleSteps[k as 'borrow' | 'arrays' | 'division'].map((st, i) => (
+                    <span key={st} className={i < stepsDone[k]! ? 'done' : i === stepsDone[k] ? 'on' : ''}>{st}</span>
                   ))}
                 </div>
               )}
