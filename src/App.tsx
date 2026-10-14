@@ -7,6 +7,7 @@ import type { PracticeModule } from './room/PracticeSheet';
 import { BorrowPractice } from './practice/BorrowPractice';
 import { TimesPractice } from './practice/TimesPractice';
 import { ShareArraysPractice } from './practice/ShareArraysPractice';
+import { StoryPractice } from './practice/StoryPractice';
 import { loadStats, saveStats } from './lib/storage';
 
 type Screen = 'room' | PracticeModule;
@@ -33,6 +34,7 @@ function App() {
       {screen === 'borrow' && <BorrowPractice onExit={toRoom} onSolved={recordAnswer} />}
       {screen === 'times' && <TimesPractice onExit={toRoom} onSolved={recordAnswer} />}
       {(screen === 'arrays' || screen === 'sharing') && <ShareArraysPractice key={screen} module={screen} onExit={toRoom} onSolved={recordAnswer} />}
+      {screen === 'story' && <StoryPractice onExit={toRoom} onSolved={recordAnswer} />}
     </>
   );
 }

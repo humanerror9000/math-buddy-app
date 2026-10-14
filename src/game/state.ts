@@ -39,6 +39,8 @@ export interface GameState {
   /** Arrays and Sharing: steps finished (0–3) */
   arrays: number;
   sharing: number;
+  /** Story math: steps finished (0–3) */
+  story: number;
 }
 
 const KEY = 'mathbuddy_game';
@@ -63,6 +65,7 @@ function fresh(): GameState {
     tables: {},
     arrays: 0,
     sharing: 0,
+    story: 0,
   };
 }
 

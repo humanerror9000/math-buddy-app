@@ -8,12 +8,12 @@ import { useGame } from '../game/store';
 import { playSfx } from '../audio/sound';
 import { CloseIcon, LockIcon } from './icons';
 
-export type PracticeModule = 'borrow' | 'times' | 'arrays' | 'sharing';
+export type PracticeModule = 'borrow' | 'times' | 'arrays' | 'sharing' | 'story';
 type CardKey = 'borrow' | 'times' | 'arrays' | 'division' | 'words';
 
-const SOON: CardKey[] = ['words'];
+const SOON: CardKey[] = [];
 /** The Sharing card is keyed 'division' for its art and name */
-const MODULE_OF: Partial<Record<CardKey, PracticeModule>> = { borrow: 'borrow', times: 'times', arrays: 'arrays', division: 'sharing' };
+const MODULE_OF: Partial<Record<CardKey, PracticeModule>> = { borrow: 'borrow', times: 'times', arrays: 'arrays', division: 'sharing', words: 'story' };
 
 function PlayIcon() {
   return (
@@ -60,8 +60,8 @@ export function PracticeSheet({ onClose, onPick }: { onClose: () => void; onPick
   const level = Math.min(2, Math.max(0, game.borrow?.level ?? 0));
   const isNewBorrow = (game.borrow?.level ?? 0) === 0 && (game.borrow?.rounds ?? 0) === 0;
   // steps finished (0–3) for the modules that show step chips
-  const stepsDone: Partial<Record<CardKey, number>> = { borrow: level, arrays: game.arrays ?? 0, division: game.sharing ?? 0 };
-  const isNew: Partial<Record<CardKey, boolean>> = { borrow: isNewBorrow, arrays: !game.arrays, division: !game.sharing };
+  const stepsDone: Partial<Record<CardKey, number>> = { borrow: level, arrays: game.arrays ?? 0, division: game.sharing ?? 0, words: game.story ?? 0 };
+  const isNew: Partial<Record<CardKey, boolean>> = { borrow: isNewBorrow, arrays: !game.arrays, division: !game.sharing, words: !game.story };
 
   const tap = (k: CardKey) => {
     if (SOON.includes(k)) {
@@ -98,7 +98,7 @@ export function PracticeSheet({ onClose, onPick }: { onClose: () => void; onPick
               <b>{name}</b>
               {stepsDone[k] !== undefined && (
                 <div className="pk-steps">
-                  {t.moduleSteps[k as 'borrow' | 'arrays' | 'division'].map((st, i) => (
+                  {t.moduleSteps[k as 'borrow' | 'arrays' | 'division' | 'words'].map((st, i) => (
                     <span key={st} className={i < stepsDone[k]! ? 'done' : i === stepsDone[k] ? 'on' : ''}>{st}</span>
                   ))}
                 </div>
