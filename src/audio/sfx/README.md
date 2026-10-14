@@ -34,6 +34,7 @@ Buddy's non-verbal voice goes in `../voice/` with the same naming.
 | `keypad-delete` | 1 | Backspace | |
 | `choice-tap` | 2 | Tapping a multiple-choice answer | |
 | `hint-start` | 1 | A visual hint begins | "Let's look" cue |
+| `type-tick` | 3 | Each letter of an instruction typing in (Story math) | Tiny, soft tick; plays fast, so keep it under 40 ms and quiet |
 
 ## 2. Visual math (arrays, division, borrowing)
 
