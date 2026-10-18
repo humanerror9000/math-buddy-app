@@ -5,6 +5,7 @@
 //   - typing: 45 ms a letter, 18 ms once the same instruction has been seen 3 times
 //   - reading pause: max(2 s, 250 ms a word), never shortened
 //   - tap anywhere to skip (short 250 ms pause instead)
+//   - one 'type-tick' sound plays as the instruction starts typing
 //   - words never break in the middle
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -47,11 +48,13 @@ export function InstructionIntro({ text, seenKey, skipLabel, onFly, onDone }: Pr
     return set;
   }, [words]);
 
+  // one sound for the whole instruction as it starts typing (a sound per letter turned into a machine gun)
+  useEffect(() => { void playSfx('type-tick'); }, []);
+
   useEffect(() => {
     if (phase !== 'type') return;
     if (shown >= total) { setPhase('hold'); return; }
     const id = window.setTimeout(() => {
-      void playSfx('type-tick', { volume: 0.5, variance: 0.3 });
       setShown((n) => n + 1);
     }, shown > 0 && wordEnds.has(shown - 1) ? speed * 1.5 : speed);
     return () => clearTimeout(id);

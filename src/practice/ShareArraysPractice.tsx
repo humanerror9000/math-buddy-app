@@ -67,7 +67,7 @@ export function ShareArraysPractice({ module, onExit, onSolved }: Props) {
       raf = requestAnimationFrame(follow);
     };
     raf = requestAnimationFrame(follow);
-    void playVoice(`buddy${game.kind}-hello`);
+    void playVoice('hello');
     return () => { cancelAnimationFrame(raf); stage?.dispose(); stageRef.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -123,7 +123,7 @@ export function ShareArraysPractice({ module, onExit, onSolved }: Props) {
     for (const f of step.fx) {
       switch (f.t) {
         case 'sfx': void playSfx(f.name, f.semitones !== undefined ? { semitones: f.semitones, variance: 0 } : undefined); break;
-        case 'voice': void playVoice(`buddy${game.kind}-${f.name}`); break;
+        case 'voice': void playVoice(f.name); break;
         case 'buddy': stageRef.current?.react(f.mood); if (f.emote) showEmote(f.emote); break;
         case 'shake': {
           const sel = { slot: '.tp-slot.active', board: '.sa-board', box: '.sa-box.o' }[f.target];
@@ -198,7 +198,7 @@ export function ShareArraysPractice({ module, onExit, onSolved }: Props) {
     }
     setComplete({ line });
     void playSfx('round-complete');
-    void playVoice(`buddy${game.kind}-cheer`);
+    void playVoice('cheer');
     stageRef.current?.react('happy');
     showEmote('star');
   }, [idx, round, level, firstTries, module, t, game.kind, showEmote]);

@@ -51,8 +51,8 @@ export function RoomHome({ onPractice }: { onPractice: (m: PracticeModule) => vo
   const prevStars = useRef(game.stars);
 
   const voice = useCallback((event: string) => {
-    void playVoice(`buddy${game.kind}-${event}`);
-  }, [game.kind]);
+    void playVoice(event);
+  }, []);
 
   const say = useCallback((text: string) => setBubble({ text, id: Date.now() }), []);
 

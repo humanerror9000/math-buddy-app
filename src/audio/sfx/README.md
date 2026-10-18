@@ -34,7 +34,7 @@ Buddy's non-verbal voice goes in `../voice/` with the same naming.
 | `keypad-delete` | 1 | Backspace | |
 | `choice-tap` | 2 | Tapping a multiple-choice answer | |
 | `hint-start` | 1 | A visual hint begins | "Let's look" cue |
-| `type-tick` | 3 | Each letter of an instruction typing in (Story math) | Tiny, soft tick; plays fast, so keep it under 40 ms and quiet |
+| `type-tick` | 3 | An instruction starts typing in (Story math), once per instruction | A soft 2–3 s shimmer that carries the whole typing; the letters themselves are silent |
 
 ## 2. Visual math (arrays, division, borrowing)
 
@@ -76,8 +76,8 @@ Buddy's non-verbal voice goes in `../voice/` with the same naming.
 
 ## 4. Buddy's voice (non-verbal) → `../voice/`
 
-Make two sets, one per Buddy: prefix `buddyboy-` and `buddygirl-` (e.g.
-`buddygirl-happy-1.wav`). Gibberish, hums and syllables, no real words, so the
+One shared set for both Buddies (the voices are child-like, so they fit either), named
+`<event>-<number>`, e.g. `happy-1.m4a`. Gibberish, hums and syllables, no real words, so the
 same set works in English and Spanish.
 
 | Event | How many | When it plays |
