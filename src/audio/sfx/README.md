@@ -76,8 +76,8 @@ Buddy's non-verbal voice goes in `../voice/` with the same naming.
 
 ## 4. Buddy's voice (non-verbal) → `../voice/`
 
-Make two sets, one per Buddy: prefix `buddyboy-` and `buddygirl-` (e.g.
-`buddygirl-happy-1.wav`). Gibberish, hums and syllables, no real words, so the
+One shared set for both Buddies (the voices are child-like, so they fit either), named
+`<event>-<number>`, e.g. `happy-1.m4a`. Gibberish, hums and syllables, no real words, so the
 same set works in English and Spanish.
 
 | Event | How many | When it plays |

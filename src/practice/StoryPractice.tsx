@@ -100,7 +100,7 @@ export function StoryPractice({ onExit, onSolved }: Props) {
       raf = requestAnimationFrame(follow);
     };
     raf = requestAnimationFrame(follow);
-    void playVoice(`buddy${game.kind}-hello`);
+    void playVoice('hello');
     return () => { cancelAnimationFrame(raf); stage?.dispose(); stageRef.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -158,7 +158,7 @@ export function StoryPractice({ onExit, onSolved }: Props) {
     for (const f of st.fx) {
       switch (f.t) {
         case 'sfx': void playSfx(f.name); break;
-        case 'voice': void playVoice(`buddy${game.kind}-${f.name}`); break;
+        case 'voice': void playVoice(f.name); break;
         case 'buddy': stageRef.current?.react(f.mood); if (f.emote) showEmote(f.emote); break;
         case 'shake': {
           const sel = { ops: '.st-ops', slot: '.st-sl.active, .st-bx.want', top: `[data-top="${f.p}"]`, buddy: '.st-buddyeq', box: '.st-bx.want' }[f.target];
@@ -233,7 +233,7 @@ export function StoryPractice({ onExit, onSolved }: Props) {
     }
     setComplete({ line });
     void playSfx('round-complete');
-    void playVoice(`buddy${game.kind}-cheer`);
+    void playVoice('cheer');
     stageRef.current?.react('happy');
     showEmote('star');
   }, [idx, round, level, firstTries, t, game.kind, showEmote, begin]);
